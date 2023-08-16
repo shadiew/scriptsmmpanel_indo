@@ -1,45 +1,92 @@
-<?php 
-// Copyright by Penulis Web (Muhammad Sofyan Murtadlo)
-// Hargailah orang lain jika Anda ingin dihargai
+<?php
 require '../mainconfig.php';
+
 if (isset($_SESSION['login'])) {
   exit(header("Location: ".$config['web']['base_url']));
 }
+
 if ($_POST) {
-  $data = array('username', 'password');
+  $data = array('username_email', 'password');
+
   if (check_input($_POST, $data) == false) {
     $_SESSION['result'] = array('alert' => 'danger', 'title' => 'Gagal!', 'msg' => 'Input tidak sesuai.');
   } else {
     $input_post = array(
-      'username' => mysqli_real_escape_string($db, trim($_POST['username'])),
-      'password' => mysqli_real_escape_string($db, trim($_POST['password'])),
+      'username_email' => trim($_POST['username_email']),
+      'password' => trim($_POST['password']),
     );
+
     if (check_empty($input_post) == true) {
       $_SESSION['result'] = array('alert' => 'danger', 'title' => 'Gagal!', 'msg' => 'Input tidak boleh kosong.');
-    }
-    else {
-      $check_user = $model->db_query($db, "*", "users", "BINARY username = '".$input_post['username']."'");
-      if ($check_user['count'] == 1) {
-        if (password_verify($input_post['password'], $check_user['rows']['password']) == true) {
-          $model->db_insert($db, "login_logs", array('user_id' => $check_user['rows']['id'], 'ip_address' => get_client_ip(), 'created_at' => date('Y-m-d H:i:s')));
-          $_SESSION['login'] = $check_user['rows']['id'];
-          $_SESSION['result'] = array('alert' => 'success', 'title' => 'Berhasil masuk!', 'msg' => 'Selamat datang '.$check_user['rows']['username'].'!');
+    } else {
+      $username_email = mysqli_real_escape_string($db, $input_post['username_email']); // Escape characters
+      $password = mysqli_real_escape_string($db, $input_post['password']); // Escape characters
+
+      $stmt = $db->prepare("SELECT * FROM users WHERE (BINARY username = ? OR email = ?) LIMIT 1");
+      $stmt->bind_param("ss", $username_email, $username_email);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $user = $result->fetch_assoc();
+      $stmt->close();
+
+      if ($user) {
+        if (password_verify($password, $user['password']) == true) {
+          $model->db_insert($db, "login_logs", array('user_id' => $user['id'], 'ip_address' => get_client_ip(), 'created_at' => date('Y-m-d H:i:s')));
+          $_SESSION['login'] = $user['id'];
+          $_SESSION['result'] = array('alert' => 'success', 'title' => 'Berhasil masuk!', 'msg' => 'Selamat datang '.$user['username'].'!');
+
+          // Your code to send the message here
+          $curl = curl_init();
+
+          $message_data = array(
+            'appkey' => '9aa5ecbc-b4be-4342-a6f5-3d6b7f4ad352',
+            'authkey' => 'QH4BQ2XdOWLjI0yB4hynpGL4eCWSmFsDanhixC6EP6mEQsqeUl',
+            'to' => '6282221584446',
+            'message' => 'Example message',
+            'sandbox' => 'false'
+          );
+
+          curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://wa.layananapi.com/api/create-message',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $message_data,
+          ));
+
+          $response = curl_exec($curl);
+
+          if ($response === false) {
+            $_SESSION['result'] = array('alert' => 'danger', 'title' => 'Gagal!', 'msg' => 'Gagal mengirim pesan WhatsApp.');
+          } else {
+            $_SESSION['result'] = array('alert' => 'success', 'title' => 'Berhasil!', 'msg' => 'Pesan WhatsApp terkirim.');
+          }
+
+          curl_close($curl);
+
           exit(header("Location: ".$config['web']['base_url']));
         } else {
-          $_SESSION['result'] = array('alert' => 'danger', 'title' => 'Gagal!', 'msg' => 'Username atau password salah.');
+          $_SESSION['result'] = array('alert' => 'danger', 'title' => 'Gagal!', 'msg' => 'Username, email, atau password salah.');
         }
       } else {
-        $_SESSION['result'] = array('alert' => 'danger', 'title' => 'Gagal!', 'msg' => 'Username atau password salah.');
+        $_SESSION['result'] = array('alert' => 'danger', 'title' => 'Gagal!', 'msg' => 'Username, email, atau password salah.');
       }
     }
   }
 }
- ?>
+?>
+
+
+
+
 
 <!DOCTYPE html>
 
 <html
-  lang="en"
+  lang="id"
   class="light-style customizer-hide"
   dir="ltr"
   data-theme="theme-default"
@@ -134,22 +181,22 @@ if ($_POST) {
                         fill="#7367F0" />
                     </svg>
                   </span>
-                  <span class="app-brand-text demo text-body fw-bold ms-1">Vuexy</span>
+                  <span class="app-brand-text demo text-body fw-bold ms-1"><?php echo $config['web']['title'] ?></span>
                 </a>
               </div>
               <!-- /Logo -->
-              <h4 class="mb-1 pt-2">Welcome to Vuexy! 👋</h4>
-              <p class="mb-4">Please sign-in to your account and start the adventure</p>
+              <h4 class="mb-1 pt-2">Selamat Datang <?php echo $config['web']['title'] ?>! 👋</h4>
+              <p class="mb-4">Silahkan login sebelum memulai sistem</p>
 
               <form  class="mb-3" method="POST">
               <input type="hidden" name="csrf_token" value="<?php echo $config['csrf_token'] ?>">
                 <div class="mb-3">
-                  <label for="email" class="form-label">Email or Username</label>
+                  <label class="form-label">Email or Username</label>
                   <input
                     type="text"
                     class="form-control"
-                    id="username" 
-                    name="username"
+                    
+                    name="username_email"
                     placeholder="Enter your email or username"
                     autofocus />
                 </div>
