@@ -120,8 +120,8 @@ function grab_bca($user, $pass)
 
     function check_bca($jumlah){
     global $pdo;
-    $user = "user";
-    $pass = "passwrod";
+    $user = "user_id";
+    $pass = "pass_id";
     $source = grab_bca($user, $pass);
     $exp = explode('<b>Saldo</b></font></div></td>', $source);
     $invoices = array();
