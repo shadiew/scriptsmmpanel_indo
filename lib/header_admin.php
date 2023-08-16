@@ -1,10 +1,5 @@
 <?php
-/**
- * Penulis Kode - SMM Panel script
- * Domain: http://penuliskode.com/
- * Documentation: http://penuliskode.com/smm/script/version-n1/documentation.html
- *
- */
+
 
 if (isset($_SESSION['login']) AND $config['web']['maintenance'] == 1) {
 	exit("<center><h1>SORRY, WEBSITE IS UNDER MAINTENANCE!</h1></center>");
@@ -12,11 +7,7 @@ if (isset($_SESSION['login']) AND $config['web']['maintenance'] == 1) {
 
 require 'is_login.php';
 ?>
-<!--
-SMM Panel script by penuliskode.com
-Anda dilarang untuk melakukan penyalinan source code dalam website ini, hargailah karya orang lain jika ingin dihargai.
-https://id.wikisource.org/wiki/Undang-Undang_Republik_Indonesia_Nomor_28_Tahun_2014
--->
+
 <!DOCTYPE html>
 <html>
 	<head>
