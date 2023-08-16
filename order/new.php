@@ -134,44 +134,49 @@ require '../lib/header.php';
                         </div>
 
 
-                        <div class="mb-3">
-                          <label class="form-label" for="basic-default-fullname">Full Name</label>
-                          <input type="text" class="form-control" id="basic-default-fullname" placeholder="John Doe" />
+                        <div class="mb-3" id="description">
                         </div>
-                        <div class="mb-3">
-                          <label class="form-label" for="basic-default-company">Company</label>
-                          <input type="text" class="form-control" id="basic-default-company" placeholder="ACME Inc." />
-                        </div>
-                        <div class="mb-3">
-                          <label class="form-label" for="basic-default-email">Email</label>
-                          <div class="input-group input-group-merge">
-                            <input
-                              type="text"
-                              id="basic-default-email"
-                              class="form-control"
-                              placeholder="john.doe"
-                              aria-label="john.doe"
-                              aria-describedby="basic-default-email2" />
-                            <span class="input-group-text" id="basic-default-email2">@example.com</span>
+
+                        <div class="row g-3">
+                          <div class="col-md-6">
+                            <label class="form-label">Min Order</label>
+                            <span class="form-control" id="min">0</span>
                           </div>
-                          <div class="form-text">You can use letters, numbers & periods</div>
+                          <div class="col-md-6">
+                            <label class="form-label">Max Order</label>
+                            <span class="form-control" id="max">0</span>
+                          </div>
                         </div>
+
+                        
                         <div class="mb-3">
-                          <label class="form-label" for="basic-default-phone">Phone No</label>
-                          <input
-                            type="text"
-                            id="basic-default-phone"
-                            class="form-control phone-mask"
-                            placeholder="658 799 8941" />
+                          <label class="form-label" for="basic-default-email">Harga</label>
+                          <div class="input-group input-group-merge">
+                            <span class="form-control" id="price"></span>
+                            <span class="input-group-text">/1000</span>
+                          </div>
+                          
                         </div>
+
+                        <div class="row g-3">
+                          <div class="col-md-6">
+                            <label class="form-label">Target</label>
+                            <input type="text" class="form-control" name="data" placeholder="Link/username">
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label">Jumlah</label>
+                            <input type="number" class="form-control" name="quantity" placeholder="1000" id="quantity">
+                          </div>
+                        </div>
+                        <input type="hidden" id="rate">
+
                         <div class="mb-3">
-                          <label class="form-label" for="basic-default-message">Message</label>
-                          <textarea
-                            id="basic-default-message"
-                            class="form-control"
-                            placeholder="Hi, Do you have a moment to talk Joe?"></textarea>
+                          <label class="form-label" for="basic-default-phone">Total Harga</label>
+                          <input type="text" class="form-control" id="total-price" readonly>
+                          <small class="text-danger">*Inputkan jumlah pesan</small>
                         </div>
-                        <button type="submit" class="btn btn-primary">Send</button>
+                        
+                        <button type="submit" class="btn btn-primary">Pesan</button>
                       </form>
                     </div>
                   </div>
@@ -179,11 +184,18 @@ require '../lib/header.php';
                 <div class="col-xl">
                   <div class="card mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                      <h5 class="mb-0">Basic with Icons</h5>
-                      <small class="text-muted float-end">Merged input group</small>
+                      <h5 class="mb-0">Informasi</h5>
+                      
                     </div>
                     <div class="card-body">
-                      
+                      <p>Selamat Datang di Layanan Kami. layanan kami dapat diakses 24jam nonstop.<br>Berikut Panduan Pembelian Layanan:</p>
+                      <li>Pilih Kategori Layanan</li>
+                      <li>Pilih Layanan</li>
+                      <li>Input jumlah</li>
+                      <li>Input target sesuai informasi</li>
+                      <li>Pastikan semua sudah benar, kesalahan input resiko di tanggung konsumen. Kemudian Klik Tombol <span class="badge bg-primary">Pesan</span></li>
+                      <br>
+                      <p>Pastikan Saldo anda Cukup. Jika terjadi error atau tidak dapat order, silahkan hubungi Admin di <span class="badge bg-warning">082221584446</span></p>
                     </div>
                   </div>
                 </div>

@@ -146,11 +146,7 @@ require 'csrf_token.php';
                     <div data-i18n="Riwayat">Riwayat</div>
                   </a>
                 </li>
-                <li class="menu-item">
-                  <a href="<?php echo $config['web']['base_url'] ?>order/graph" class="menu-link">
-                    <div data-i18n="Grafik">Grafik</div>
-                  </a>
-                </li>
+                
               </ul>
             </li>
             <!-- Deposit -->
