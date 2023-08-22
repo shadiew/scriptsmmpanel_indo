@@ -1,230 +1,331 @@
-<?php
-
-
-if (isset($_SESSION['login']) AND $config['web']['maintenance'] == 1) {
-	exit("<center><h1>SORRY, WEBSITE IS UNDER MAINTENANCE!</h1></center>");
-}
-
-require 'is_login.php';
-?>
-
 <!DOCTYPE html>
-<html>
-	<head>
-	    <meta name="google-site-verification" content="6irIt2zKEBM9MQ6jT_3FW36w352DBgljrgG62ka2MLw" />
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="<?php echo $config['web']['meta']['description'] ?>">
-		<meta name="keywords" content="<?php echo $config['web']['meta']['keywords'] ?>">
-		<meta name="author" content="<?php echo $config['web']['meta']['author'] ?>">
-		<link rel="icon" href="<?php echo $config['web']['base_url'] ?>assets/images/logo.jpg" type="image/png">
-		<title><?php echo $config['web']['title'] ?></title>
-		<link href="<?php echo $config['web']['base_url'] ?>assets/plugins/morris/morris.css" rel="stylesheet" />
-		<link href="<?php echo $config['web']['base_url'] ?>assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-		<link href="<?php echo $config['web']['base_url'] ?>assets/css/icons.css" rel="stylesheet" type="text/css" />
-		<link href="<?php echo $config['web']['base_url'] ?>assets/css/style.css" rel="stylesheet" type="text/css" />
-		<script src="<?php echo $config['web']['base_url'] ?>assets/js/modernizr.min.js"></script>
-		<script src="<?php echo $config['web']['base_url'] ?>assets/js/jquery.min.js"></script>
-		<script src="<?php echo $config['web']['base_url'] ?>assets/js/popper.min.js"></script>
-		<script src="<?php echo $config['web']['base_url'] ?>assets/js/bootstrap.min.js"></script>
-		<script src="<?php echo $config['web']['base_url'] ?>assets/js/waves.js"></script>
-		<script src="<?php echo $config['web']['base_url'] ?>assets/js/jquery.slimscroll.js"></script>
-		<script src="<?php echo $config['web']['base_url'] ?>assets/plugins/morris/morris.min.js"></script>
-		<script src="<?php echo $config['web']['base_url'] ?>assets/plugins/raphael/raphael-min.js"></script>
-        <link href="<?php echo $config['web']['base_url'] ?>assets/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-        <!--<link href="<?php echo $config['web']['base_url'] ?>assets/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-        //<link href="<?php echo $config['web']['base_url'] ?>assets/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-		//<script src="<?php echo $config['web']['base_url'] ?>assets/plugins/datatables/jquery.dataTables.min.js"></script>
-        //<script src="<?php echo $config['web']['base_url'] ?>assets/plugins/datatables/dataTables.bootstrap4.min.js"></script> -->
-		<style type="text/css">.hide{display:none!important}.show{display:block!important}</style>
-		<script type="text/javascript">
-        function modal_open(type, url) {
-			$('#modal').modal('show');
-			if (type == 'add') {
-				$('#modal-title').html('<i class="fa fa-plus-square"></i> Tambah Data');
-			} else if (type == 'edit') {
-				$('#modal-title').html('<i class="fa fa-edit"></i> Ubah Data');
-			} else if (type == 'delete') {
-				$('#modal-title').html('<i class="fa fa-trash"></i> Hapus Data');
-			} else if (type == 'detail') {
-				$('#modal-title').html('<i class="fa fa-search"></i> Detail Data');
-			} else {
-				$('#modal-title').html('Empty');
-			}
-        	$.ajax({
-        		type: "GET",
-        		url: url,
-        		beforeSend: function() {
-        			$('#modal-detail-body').html('Sedang memuat...');
-        		},
-        		success: function(result) {
-        			$('#modal-detail-body').html(result);
-        		},
-        		error: function() {
-        			$('#modal-detail-body').html('Terjadi kesalahan.');
-        		}
-        	});
-        	$('#modal-detail').modal();
-        }
-		function update_data(url) {
-			$('#modal-delete').modal('hide');
-			$.ajax({
-				type: "GET",
-				url: url,
-				dataType: "html",
-				success: function($data) {
-					$('#body-result').html($data);
-					$('#datatable').DataTable().ajax.reload();
-				}, error: function() {
-					$('#body-result').html('<div class="alert alert-danger alert-dismissable"><b>Respon:</b> Gagal!<br /><b>Pesan:</b> Terjadi kesalahan!</div>');
-				},
-				beforeSend: function() {
-					$('#body-result').html('<div class="progress progress-striped active"><div style="width: 100%" class="progress-bar progress-bar-primary"></div></div>');
-				}
-			});
-		}
-    	</script>
-<style type="text/css">
-.block { position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,.5); z-index: 9999; }
-</style>
-	</head>
-	<body>
-	<header id="topnav">
-			<div class="topbar-main">
-				<div class="container-fluid">
-					<div class="logo">
-						<a href="https://drive.google.com/file/d/1-VdELQrUq2x2G8aVfazEODm1Pll9vi6V/view?usp=drivesdk" class="logo">
-							<span class="logo-small"><i class="fa fa-android"></i></span>
-							<span class="logo-large"><i class="fa fa-android"></i> <?php echo $config['web']['title'] ?></span>
-						</a>
-					</div>
-					<div class="menu-extras topbar-custom">
-						<ul class="list-unstyled topbar-right-menu float-right mb-0">
-							<li class="menu-item">
-								<a class="navbar-toggle nav-link">
-									<div class="lines">
-										<span></span>
-										<span></span>
-										<span></span>
-									</div>
-								</a>
-							</li>
-							<?php
-					        if (isset($_SESSION['login'])) { ?>
-							<li style="padding: 0 10px;">
-								<span class="nav-link">Saldo: Rp <?php echo number_format($login['balance'],0,',','.'); ?></span>
-							</li>
-							<li class="dropdown notification-list">
-								<a class="nav-link dropdown-toggle waves-effect nav-user" data-toggle="dropdown" href="#" role="button"
-									aria-haspopup="false" aria-expanded="false">
-								<i class="fa fa-user"></i> <span class="ml-1 pro-user-name"><?php echo $login['username']; ?> <i class="mdi mdi-chevron-down"></i> </span>
-								</a>
-								<div class="dropdown-menu dropdown-menu-right profile-dropdown">
-									<a href="<?php echo $config['web']['base_url'] ?>user/settings" class="dropdown-item notify-item"><i class="fa fa-gear fa-fw"></i> <span>Pengaturan Akun</span></a>
-									<a href="<?php echo $config['web']['base_url'] ?>logout" class="dropdown-item notify-item"><i class="fa fa-sign-out fa-fw"></i> <span>Keluar</span></a>
-								</div>
-							</li>
-							<?php 
-        					}
-        					?>
-						</ul>
-					</div>
-					<div class="clearfix"></div>
-				</div>
-			</div>
-			<div class="navbar-custom">
-				<div class="container-fluid">
-					<div id="navigation">
-						<ul class="navigation-menu">
-						<li class="has-submenu">
-							<a href="#"><i class="fa fa-file"></i> Halaman</a>
-							<ul class="submenu">
-								<li><a href="<?php echo $config['web']['base_url'] ?>admin"> Admin</a></li>
-								<li><a href="<?php echo $config['web']['base_url'] ?>"> Pengguna</a></li>
-							</ul>
-						</li>
-						<li>
-							<a href="<?php echo $config['web']['base_url'] ?>admin"> <i class="fa fa-dashboard"></i> Dashboard</a>
-						</li>
-						<li class="has-submenu">
-							<a href="#"><i class="fa fa-tags"></i> Layanan</a>
-							<ul class="submenu">
-								<li><a href="<?php echo $config['web']['base_url'] ?>admin/provider">Provider API</a></li>
-								<li><a href="<?php echo $config['web']['base_url'] ?>admin/category">Kategori</a></li>
-								<li><a href="<?php echo $config['web']['base_url'] ?>admin/service">Layanan</a></li>
-							</ul>
-						</li>
-						<li>
-							<a href="<?php echo $config['web']['base_url'] ?>admin/user"><i class="fa fa-users"></i>Pengguna</a>
-						</li>
-						<li class="has-submenu">
-							<a href="#"><i class="fa fa-money"></i> Deposit</a>
-							<ul class="submenu">
-								<li><a href="<?php echo $config['web']['base_url'] ?>admin/deposit_method">Metode Deposit</a></li>
-								<li><a href="<?php echo $config['web']['base_url'] ?>admin/voucher">Redeem Voucher</a></li>
-								<li><a href="<?php echo $config['web']['base_url'] ?>admin/deposit">Deposit</a></li>
-								<li><a href="<?php echo $config['web']['base_url'] ?>admin/deposit/report">Laporan</a></li>
-							</ul>
-						</li>
-						<li class="has-submenu">
-							<a href="#"><i class="fa fa-shopping-cart"></i> Pesanan</a>
-							<ul class="submenu">
-								<li><a href="<?php echo $config['web']['base_url'] ?>admin/order">Pesanan</a></li>
-								<li><a href="<?php echo $config['web']['base_url'] ?>admin/order/report">Laporan</a></li>
-							</ul>
-						</li>
-						<li class="has-submenu">
-							<a href="#"><i class="fa fa-file"></i> Log</a>
-							<ul class="submenu">
-								<li><a href="<?php echo $config['web']['base_url'] ?>admin/log/login">Masuk</a></li>
-								<li><a href="<?php echo $config['web']['base_url'] ?>admin/log/balance-usage">Penggunaan Saldo</a></li>
-							</ul>
-						</li>
-						<li class="has-submenu">
-							<a href="#"><i class="fa fa-list"></i> Lainnya</a>
-							<ul class="submenu">
-								<li><a href="<?php echo $config['web']['base_url'] ?>admin/page">Halaman</a></li>
-								<li><a href="<?php echo $config['web']['base_url'] ?>admin/ticket">Tiket</a></li>
-								<li><a href="<?php echo $config['web']['base_url'] ?>admin/news">Berita & Informasi</a></li>
-							</ul>
-						</li>
-                        </ul>
-					</div>
-				</div>
-			</div>
-		</header>
 
-        <div class="wrapper">
-			<div class="container-fluid" style="padding-top: 30px;">
-			<div class="modal fade" id="modal" id="modal-detail" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" style="display: none;">
-				<div class="modal-dialog modal-dialog-centered modal-lg">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-							<h4 class="modal-title" id="modal-title"></h4>
-						</div>
-						<div class="modal-body" id="modal-detail-body">
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-light" data-dismiss="modal">Tutup</button>
-						</div>
-					</div>
-				</div>
-			</div>
-				
-                <div class="row">
-                    <div class="col-lg-12" id="body-result">
-<?php
-if (isset($_SESSION['result'])) {
-?>
-<div class="alert alert-<?php echo $_SESSION['result']['alert'] ?> alert-dismissable">
-	<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-	<b>Respon :</b> <?php echo $_SESSION['result']['title'] ?><br />
-	<b>Pesan :</b> <?php echo $_SESSION['result']['msg'] ?>
-</div>
-<?php
-unset($_SESSION['result']);
-}
-?>
+<html
+  lang="en"
+  class="light-style layout-navbar-fixed layout-menu-fixed"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="<?php echo $config['web']['base_url'] ?>assets/"
+  data-template="vertical-menu-template">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+    <title><?php echo $config['web']['title'] ?> | Adminpanel</title>
+
+    <meta name="description" content="" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="<?php echo $config['web']['base_url'] ?>assets/img/favicon/favicon.ico" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&ampdisplay=swap"
+      rel="stylesheet" />
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="<?php echo $config['web']['base_url'] ?>assets/vendor/fonts/fontawesome.css" />
+    <link rel="stylesheet" href="<?php echo $config['web']['base_url'] ?>assets/vendor/fonts/tabler-icons.css" />
+    <link rel="stylesheet" href="<?php echo $config['web']['base_url'] ?>assets/vendor/fonts/flag-icons.css" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="<?php echo $config['web']['base_url'] ?>assets/vendor/css/rtl/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="<?php echo $config['web']['base_url'] ?>assets/vendor/css/rtl/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="<?php echo $config['web']['base_url'] ?>assets/css/demo.css" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="<?php echo $config['web']['base_url'] ?>assets/vendor/libs/node-waves/node-waves.css" />
+    <link rel="stylesheet" href="<?php echo $config['web']['base_url'] ?>assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    <link rel="stylesheet" href="<?php echo $config['web']['base_url'] ?>assets/vendor/libs/typeahead-js/typeahead.css" />
+    <link rel="stylesheet" href="<?php echo $config['web']['base_url'] ?>assets/vendor/libs/apex-charts/apex-charts.css" />
+
+    <!-- Page CSS -->
+
+    <!-- Helpers -->
+    <script src="<?php echo $config['web']['base_url'] ?>assets/vendor/js/helpers.js"></script>
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Template customizer: To hide customizer set displayCustomizer value false in config.js.  -->
+    <script src="<?php echo $config['web']['base_url'] ?>assets/vendor/js/template-customizer.js"></script>
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="<?php echo $config['web']['base_url'] ?>assets/js/config.js"></script>
+  </head>
+
+  <body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+      <div class="layout-container">
+        <!-- Menu -->
+
+        <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+          <div class="app-brand demo">
+            <a href="index.html" class="app-brand-link">
+              <span class="app-brand-logo demo">
+                <svg width="32" height="22" viewBox="0 0 32 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M0.00172773 0V6.85398C0.00172773 6.85398 -0.133178 9.01207 1.98092 10.8388L13.6912 21.9964L19.7809 21.9181L18.8042 9.88248L16.4951 7.17289L9.23799 0H0.00172773Z"
+                    fill="#7367F0" />
+                  <path
+                    opacity="0.06"
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M7.69824 16.4364L12.5199 3.23696L16.5541 7.25596L7.69824 16.4364Z"
+                    fill="#161616" />
+                  <path
+                    opacity="0.06"
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M8.07751 15.9175L13.9419 4.63989L16.5849 7.28475L8.07751 15.9175Z"
+                    fill="#161616" />
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M7.77295 16.3566L23.6563 0H32V6.88383C32 6.88383 31.8262 9.17836 30.6591 10.4057L19.7824 22H13.6938L7.77295 16.3566Z"
+                    fill="#7367F0" />
+                </svg>
+              </span>
+              <span class="app-brand-text demo menu-text fw-bold">Adminpanel</span>
+            </a>
+
+            <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+              <i class="ti menu-toggle-icon d-none d-xl-block ti-sm align-middle"></i>
+              <i class="ti ti-x d-block d-xl-none ti-sm align-middle"></i>
+            </a>
+          </div>
+
+          <div class="menu-inner-shadow"></div>
+
+          <ul class="menu-inner py-1">
+            <!-- Dashboards -->
+
+            <li class="menu-item active">
+              <a href="<?php echo $config['web']['base_url'] ?>admin" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-smart-home"></i>
+                <div data-i18n="Dashboard">Dashboard</div>
+              </a>
+            </li>
+            <!-- Apps & Pages -->
+            <li class="menu-header small text-uppercase">
+              <span class="menu-header-text">Apps &amp; Pages</span>
+            </li>
+            <li class="menu-item">
+              <a href="<?php echo $config['web']['base_url'] ?>admin/user" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-users"></i>
+                <div data-i18n="User">User</div>
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-book"></i>
+                <div data-i18n="Layanan">Layanan</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="<?php echo $config['web']['base_url'] ?>admin/provider" class="menu-link">
+                    <div data-i18n="Provider API">Provider API</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="<?php echo $config['web']['base_url'] ?>admin/categoryl" class="menu-link">
+                    <div data-i18n="Kategori">Kategori</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="<?php echo $config['web']['base_url'] ?>admin/service" class="menu-link">
+                    <div data-i18n="Layanan">Layanan</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-credit-card"></i>
+                <div data-i18n="Deposit">Deposit</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="<?php echo $config['web']['base_url'] ?>admin/deposit_method" class="menu-link">
+                    <div data-i18n="Metode Deposit">Metode Deposit</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="<?php echo $config['web']['base_url'] ?>admin/voucher" class="menu-link">
+                    <div data-i18n="My Course">Redeem Voucher</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="<?php echo $config['web']['base_url'] ?>admin/deposit" class="menu-link">
+                    <div data-i18n="Deposit">Deposit</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="<?php echo $config['web']['base_url'] ?>admin/deposit/report" class="menu-link">
+                    <div data-i18n="Laporan">Laporan</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
+
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
+                <div data-i18n="Transaksi">Transaksi</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="<?php echo $config['web']['base_url'] ?>admin/order" class="menu-link">
+                    <div data-i18n="Order">Order</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="<?php echo $config['web']['base_url'] ?>admin/order/report" class="menu-link">
+                    <div data-i18n="Laporan">Laporan</div>
+                  </a>
+                </li>
+                
+              </ul>
+            </li>
+
+            
+
+            <!-- Components -->
+            <li class="menu-header small text-uppercase">
+              <span class="menu-header-text">Halaman Lainnya</span>
+            </li>
+            <!-- Cards -->
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-map"></i>
+                <div data-i18n="Log">Log</div>
+                
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="<?php echo $config['web']['base_url'] ?>admin/log/login" class="menu-link">
+                    <div data-i18n="Masuk">Masuk</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="<?php echo $config['web']['base_url'] ?>admin/log/balance-usage" class="menu-link">
+                    <div data-i18n="Penggunaan Saldo">Penggunaan Saldo</div>
+                  </a>
+                </li>
+              
+              </ul>
+            </li>
+            <li class="menu-item">
+              <a href="<?php echo $config['web']['base_url'] ?>admin/page" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-file-description"></i>
+                <div data-i18n="Halaman">Halaman</div>
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="<?php echo $config['web']['base_url'] ?>admin/ticket" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-mail-opened"></i>
+                <div data-i18n="Tiket">Tiket</div>
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="<?php echo $config['web']['base_url'] ?>admin/news" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-layout-navbar"></i>
+                <div data-i18n="Berita & Informasi">Berita & Informasi</div>
+              </a>
+            </li>
+            
+
+            <!-- Forms & Tables -->
+            <li class="menu-header small text-uppercase">
+              <span class="menu-header-text">User Session</span>
+            </li>
+            <!-- Forms -->
+            
+            <!-- Tables -->
+            <li class="menu-item">
+              <a href="tables-basic.html" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-logout"></i>
+                <div data-i18n="Logout">Logout</div>
+              </a>
+            </li>
+            
+          </ul>
+        </aside>
+        <!-- / Menu -->
+
+        <!-- Layout container -->
+        <div class="layout-page">
+          <!-- Navbar -->
+
+          <nav
+            class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+            id="layout-navbar">
+            <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+              <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                <i class="ti ti-menu-2 ti-sm"></i>
+              </a>
+            </div>
+
+            <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+              
+
+              <ul class="navbar-nav flex-row align-items-center ms-auto">
+                
+
+                <!-- Style Switcher -->
+                <li class="nav-item dropdown-style-switcher dropdown me-2 me-xl-0">
+                  <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+                    <i class="ti ti-md"></i>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-styles">
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);" data-theme="light">
+                        <span class="align-middle"><i class="ti ti-sun me-2"></i>Light</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);" data-theme="dark">
+                        <span class="align-middle"><i class="ti ti-moon me-2"></i>Dark</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);" data-theme="system">
+                        <span class="align-middle"><i class="ti ti-device-desktop me-2"></i>System</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <!-- / Style Switcher-->
+
+                <!-- Quick links  -->
+                
+
+                <!-- User -->
+                <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                  <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+                    <div class="avatar avatar-online">
+                      <img src="<?php echo $config['web']['base_url'] ?>assets/img/avatars/1.png" alt class="h-auto rounded-circle" />
                     </div>
-                </div>
+                  </a>
+                  
+                </li>
+                <!--/ User -->
+              </ul>
+            </div>
+
+            <!-- Search Small Screens -->
+            <div class="navbar-search-wrapper search-input-wrapper d-none">
+              <input
+                type="text"
+                class="form-control search-input container-xxl border-0"
+                placeholder="Search..."
+                aria-label="Search..." />
+              <i class="ti ti-x ti-sm search-toggler cursor-pointer"></i>
+            </div>
+          </nav>
+
+          <!-- / Navbar -->

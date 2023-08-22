@@ -1,21 +1,12 @@
 <?php
-/**
- * Penulis Kode - SMM Panel script
- * Domain: http://penuliskode.com/
- * Documentation: http://penuliskode.com/smm/script/version-n1/documentation.html
- *
- */
-
-// ADD SERVICES IRVANKEDE
-
 error_reporting(0);
 
-require '../mainconfig.php';
+require 'mainconfig.php';
 
 $provider = mysqli_query($db, "SELECT * FROM provider WHERE id = '1'");
 $provider = mysqli_fetch_assoc($provider);
 
-$curl = post_curl('https://irvankede-smm.co.id/api/services', array('api_id' => , 'api_key' => $provider['api_key']));
+$curl = post_curl('https://irvankedesmm.co.id/api/services', array('api_id' => 2233, 'api_key' => $provider['api_key']));
 $result = json_decode($curl, true);
 
 if ($result['status'] == false) exit("Curl gagal! ".$curl."");
@@ -48,7 +39,13 @@ foreach($result['data'] as $service) {
 			' IKP' => '',
 			' IK' => '',
 		));
-		$insert = mysqli_query($db, "INSERT INTO `services`(`category_id`, `service_name`, `note`, `price`, `profit`, `min`, `max`, `status`, `provider_id`, `provider_service_id`) VALUES ('".$service['category']."','".$service_name."','".$service['note']."','".($service['price'] + 5000)."','1000','".$service['min']."','".$service['max']."','1','1','".$service['id']."')");
+
+        // Calculate the markup profit using a percentage
+        $markup_percentage = 20; // Change this to the desired percentage
+        $markup_amount = ($service['price'] * $markup_percentage) / 100;
+
+		$insert = mysqli_query($db, "INSERT INTO `services`(`category_id`, `service_name`, `note`, `price`, `profit`, `min`, `max`, `status`, `provider_id`, `provider_service_id`) VALUES ('".$service['category']."','".$service_name."','".$service['note']."','".($service['price'] + $markup_amount)."','".$markup_amount."','".$service['min']."','".$service['max']."','1','1','".$service['id']."')");
 		echo ($insert == true) ? 'sukses<br />' : mysqli_error($db).'<br />';
 	}
 }
+?>

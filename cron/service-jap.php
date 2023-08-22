@@ -1,13 +1,4 @@
 <?php
-/**
- * Penulis Kode - SMM Panel script
- * Domain: http://penuliskode.com/
- * Documentation: http://penuliskode.com/smm/script/version-n1/documentation.html
- *
- */
-
-// ADD SERVICES IRVANKEDE
-
 error_reporting(0);
 
 require '../mainconfig.php';
