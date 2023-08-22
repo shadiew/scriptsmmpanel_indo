@@ -8,27 +8,9 @@
                     <script>
                       document.write(new Date().getFullYear());
                     </script>
-                    , made with ❤️ by <a href="https://pixinvent.com" target="_blank" class="fw-medium">Pixinvent</a>
+                    , made with ❤️ by <a href="<?php echo $config['web']['base_url'] ?>" target="_blank" class="fw-medium"><?php echo $config['web']['title'] ?></a>
                   </div>
-                  <div class="d-none d-lg-inline-block">
-                    <a href="https://themeforest.net/licenses/standard" class="footer-link me-4" target="_blank"
-                      >License</a
-                    >
-                    <a href="https://1.envato.market/pixinvent_portfolio" target="_blank" class="footer-link me-4"
-                      >More Themes</a
-                    >
-
-                    <a
-                      href="https://demos.pixinvent.com/vuexy-html-admin-template/documentation/"
-                      target="_blank"
-                      class="footer-link me-4"
-                      >Documentation</a
-                    >
-
-                    <a href="https://pixinvent.ticksy.com/" target="_blank" class="footer-link d-none d-sm-inline-block"
-                      >Support</a
-                    >
-                  </div>
+                  
                 </div>
               </div>
             </footer>
@@ -72,5 +54,15 @@
 
     <!-- Page JS -->
     <script src="<?php echo $config['web']['base_url'] ?>assets/js/dashboards-crm.js"></script>
+    <script src="<?php echo $config['web']['base_url'] ?>assets/js/tables-datatables-basic.js"></script>
+    <script src="<?php echo $config['web']['base_url'] ?>assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
+    <script>
+    $(document).ready(function() {
+      // Initialize DataTable
+      $('#admin').DataTable({
+        // Add any additional configuration options here
+      });
+    });
+  </script>
   </body>
 </html>

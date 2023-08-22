@@ -52,6 +52,13 @@
     <script src="<?php echo $config['web']['base_url'] ?>assets/vendor/js/template-customizer.js"></script>
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="<?php echo $config['web']['base_url'] ?>assets/js/config.js"></script>
+    <link rel="stylesheet" href="<?php echo $config['web']['base_url'] ?>assets/vendor/libs/datatables-checkboxes-jquery/datatables.checkboxes.css" />
+    <link rel="stylesheet" href="<?php echo $config['web']['base_url'] ?>assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css" />
+    <link rel="stylesheet" href="<?php echo $config['web']['base_url'] ?>assets/vendor/libs/flatpickr/flatpickr.css" />
+    <!-- Row Group CSS -->
+    <link rel="stylesheet" href="<?php echo $config['web']['base_url'] ?>assets/vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css" />
+    <link rel="stylesheet" href="<?php echo $config['web']['base_url'] ?>assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css" />
+    <link rel="stylesheet" href="<?php echo $config['web']['base_url'] ?>/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css" />
   </head>
 
   <body>
@@ -131,7 +138,7 @@
                   </a>
                 </li>
                 <li class="menu-item">
-                  <a href="<?php echo $config['web']['base_url'] ?>admin/categoryl" class="menu-link">
+                  <a href="<?php echo $config['web']['base_url'] ?>admin/category" class="menu-link">
                     <div data-i18n="Kategori">Kategori</div>
                   </a>
                 </li>
